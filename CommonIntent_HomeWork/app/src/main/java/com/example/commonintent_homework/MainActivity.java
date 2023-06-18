@@ -2,6 +2,7 @@ package com.example.commonintent_homework;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.SearchManager;
 import android.os.Bundle;
 
 import android.content.Intent;
@@ -9,6 +10,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.AlarmClock;
 import android.provider.CalendarContract;
+import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -73,6 +76,30 @@ public class MainActivity extends AppCompatActivity {
                 addEvent("Common Intent to create an event" , "Ho Chi Minh City" , 10000000, 2000000);
             }
         });
+
+        ImageView contactImage = findViewById(R.id.create_contact);
+        contactImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                insertContact("Common Intent to create new contact", "viethoangnghia@gmail.com");
+            }
+        });
+
+        ImageView emailImage = findViewById(R.id.create_email);
+        emailImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                composeEmail(new String[]{"viethoangnghia@gmail.com"}, "This is subject");
+            }
+        });
+
+        ImageView musicImage = findViewById(R.id.create_music);
+        musicImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playSearchArtist("Taylor Swift");
+            }
+        });
     }
 
     public void callPhone(String phoneNumber) {
@@ -117,5 +144,32 @@ public class MainActivity extends AppCompatActivity {
                 .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, begin)
                 .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end);
             startActivity(intent);
+    }
+
+    public void insertContact(String name, String email) {
+        Intent intent = new Intent(Intent.ACTION_INSERT);
+        intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
+        intent.putExtra(ContactsContract.Intents.Insert.NAME, name);
+        intent.putExtra(ContactsContract.Intents.Insert.EMAIL, email);
+            startActivity(intent);
+    }
+
+    public void composeEmail(String[] addresses, String subject) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // Only email apps handle this.
+        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+            startActivity(intent);
+
+    }
+
+    public void playSearchArtist(String artist) {
+        Intent intent = new Intent(MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH);
+        intent.putExtra(MediaStore.EXTRA_MEDIA_FOCUS,
+                MediaStore.Audio.Artists.ENTRY_CONTENT_TYPE);
+        intent.putExtra(MediaStore.EXTRA_MEDIA_ARTIST, artist);
+        intent.putExtra(SearchManager.QUERY, artist);
+            startActivity(intent);
+
     }
 }
